@@ -118,6 +118,7 @@ button{
   opacity:0;
   pointer-events:none;
   transition:opacity 2.5s ease;
+  z-index: 9999;
 }
 
 #final.show{
@@ -232,6 +233,18 @@ button{
     transform:scale(1);
   }
 }   
+
+#videoSection{
+  margin:25px auto;
+}
+
+#videoSection video{
+  width:100%;
+  max-width:320px;
+  border-radius:16px;
+  box-shadow:
+    0 0 30px rgba(255,180,120,.35);
+}
 </style>
     </head>
 
@@ -242,7 +255,7 @@ button{
             <p>Tap anywhere to continue</p>
         </div>
         <audio id="bgm" loop>
-            <source src="until_i_found_you.mp3" type="audio/mpeg">
+            <source src="Until_I_Found_You.mp3" type="audio/mpeg">
         </audio>
 
         <div class="container">
@@ -269,11 +282,9 @@ button{
                     </div>
                 </div>
 
-                <!-- ✍️ LETTER AFTER PHOTOS -->
-                <div id="letter"></div>
-
                 <!-- ✅ UPDATED BUTTON -->
-                <button id="nextBtn" class="glow-btn" onclick="nextStep()">Tap to Next →</button>
+                <button id="nextBtn" class="glow-btn" onclick="nextStep()">Tap
+                    to Next →</button>
 
             </div>
         </div>
@@ -281,6 +292,20 @@ button{
         <!-- 🖤 LAST SCREEN -->
         <div id="final">
             <h2>Thank you for existing.</h2>
+        </div>
+
+        <div id="videoSection" style="display:none;">
+            <video id="memoryVideo" controls playsinline>
+                <source src="video1.mp4" type="video/mp4">
+            </video>
+
+            <button id="videoNextBtn" onclick="showLetter()"
+                style="display:none;">
+                Tap to Next →
+            </button>
+
+            <!-- ✅ LETTER NOW UNDER VIDEO -->
+            <div id="letter"></div>
         </div>
 
         <script>
@@ -331,19 +356,24 @@ function startGallery(){
 /* 👉 Button Control */
 function nextStep(){
   if(stage === 0){
-    // First tap → photos + music
     document.getElementById("bgm").play();
     photosDiv.style.display = "block";
     startGallery();
     stage = 1;
   }
   else if(stage === 1){
-    // Second tap → letter
-    btn.style.display = "none";
-    letterDiv.style.display = "block";
-    typeLetter();
+    document.getElementById("videoSection").style.display = "block";
+    document.getElementById("videoNextBtn").style.display = "block";
+    btn.style.display = "none"; // main button hide
     stage = 2;
   }
+
+else if(stage === 2){
+  btn.style.display = "none";
+  letterDiv.style.display = "block";
+  typeLetter();
+  stage = 3;
+}
 }
 
 /* ✍️ Typewriter */
@@ -360,7 +390,11 @@ function typeLetter(){
 /* 🖤 Final Screen */
 function showFinal(){
   document.getElementById("final").classList.add("show");
-  fadeOutMusic(); // 🎶 music fade-out here
+
+  // ❌ video hide
+  document.getElementById("videoSection").style.display = "none";
+
+  fadeOutMusic();
 }
 
 /* 🤍 Soft hearts */
@@ -399,11 +433,23 @@ function fadeOutMusic(){
     }
   }, 200); // smooth & slow
 }
+
+const video = document.getElementById("memoryVideo");
+const bgm = document.getElementById("bgm");
+
+video.addEventListener("play",()=>{
+  bgm.volume = 0.15;
+});
+video.addEventListener("pause",()=>{
+  bgm.volume = 0.4;
+});
+function showLetter(){
+  document.getElementById("videoNextBtn").style.display = "none";
+  letterDiv.style.display = "block";
+  typeLetter();
+}
 </script>
 
     </body>
 
-
 </html>
-
-
